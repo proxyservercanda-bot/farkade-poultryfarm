@@ -1,0 +1,47 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum PaymentMethod {
+  ONLINE
+  COD
+}
+
+enum OrderStatus {
+  RECEIVED
+  CONFIRMED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+model Order {
+  id              String        @id @default(uuid())
+  orderNumber     String        @unique
+  customerName    String
+  mobileNumber    String
+  village         String
+  fullAddress     String
+  productName     String        @default("गावराण अंडी")
+  quantity        Int
+  unitPrice       Decimal       @default(17.00)
+  subtotal        Decimal
+  discountPercent Decimal       @default(0.00)
+  discountAmount  Decimal       @default(0.00)
+  finalAmount     Decimal
+  deliveryCharge  Decimal       @default(0.00)
+  paymentMethod   PaymentMethod
+  utrNumber       String?
+  notes           String?
+  status          OrderStatus   @default(RECEIVED)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([mobileNumber])
+  @@index([orderNumber])
+}
